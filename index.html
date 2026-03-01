@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Resume Builder | 100% Free & Offline</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        :root { --bg: #f4f7f6; --primary: #007bff; --text: #333; --border: #ccc; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+        
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: #222; }
+        .header p { margin: 5px 0 0 0; color: #666; font-size: 14px; }
+
+        .container { display: flex; gap: 20px; max-width: 1300px; margin: 0 auto; flex-wrap: wrap; }
+        
+        /* Left Panel - Editor */
+        .editor-panel { flex: 1; min-width: 350px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: 80vh; overflow-y: auto; }
+        .editor-panel h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input[type="text"], input[type="email"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 14px; }
+        textarea { resize: vertical; min-height: 80px; }
+
+        .btn-download { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.2s; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
+        .btn-download:hover { background: #218838; transform: translateY(-2px); }
+
+        /* Right Panel - Live A4 Preview */
+        .preview-panel { flex: 1.5; min-width: 400px; display: flex; justify-content: center; align-items: flex-start; background: #e0e5ec; padding: 20px; border-radius: 12px; overflow-y: auto; height: 80vh; }
+        
+        /* The A4 Paper */
+        .a4-page { width: 210mm; min-height: 297mm; background: white; padding: 20mm; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.5; }
+        
+        /* Resume Styles (ATS Friendly Clean Look) */
+        .cv-header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+        .cv-name { font-size: 28px; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .cv-contact { font-size: 12px; margin-top: 5px; }
+        
+        .cv-section-title { font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000; margin: 15px 0 10px 0; padding-bottom: 3px; }
+        .cv-text { font-size: 14px; margin: 0; text-align: justify; }
+        .cv-item-title { font-weight: bold; font-size: 14px; margin: 5px 0 0 0; }
+        .cv-item-subtitle { font-style: italic; font-size: 13px; margin: 0 0 5px 0; display: flex; justify-content: space-between; }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .preview-panel { display: none; /* Hide live preview on mobile to save space, show only download button */ }
+            .editor-panel { height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📄 ATS Resume Builder</h1>
+        <p>100% Offline • Real-time Preview • No Watermarks</p>
+    </div>
+
+    <div class="container">
+        <div class="editor-panel">
+            <h3>Personal Details</h3>
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="inpName" placeholder="AMAN KUMAR" onkeyup="updateCV()">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Email</label>
+                    <input type="email" id="inpEmail" placeholder="aman@example.com" onkeyup="updateCV()">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Phone</label>
+                    <input type="text" id="inpPhone" placeholder="+91 7488XXXXXX" onkeyup="updateCV()">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>LinkedIn / Portfolio URL</label>
+                <input type="text" id="inpLink" placeholder="linkedin.com/in/reyz" onkeyup="updateCV()">
+            </div>
+
+            <h3>Professional Summary</h3>
+            <div class="input-group">
+                <textarea id="inpSummary" placeholder="A highly motivated IT Engineering student..." onkeyup="updateCV()"></textarea>
+            </div>
+
+            <h3>Education</h3>
+            <div class="input-group">
+                <input type="text" id="inpDegree" placeholder="B.Tech in Information Technology" style="margin-bottom:5px;" onkeyup="updateCV()">
+                <input type="text" id="inpCollege" placeholder="BIT Sindri, Dhanbad" style="margin-bottom:5px;" onkeyup="updateCV()">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="inpEduYear" placeholder="2023 - 2027" style="flex:1;" onkeyup="updateCV()">
+                    <input type="text" id="inpEduScore" placeholder="CGPA: 8.5" style="flex:1;" onkeyup="updateCV()">
+                </div>
+            </div>
+
+            <h3>Skills</h3>
+            <div class="input-group">
+                <textarea id="inpSkills" placeholder="Languages: C++, JavaScript, Python&#10;Tools: Git, VS Code, Figma" onkeyup="updateCV()"></textarea>
+            </div>
+
+            <h3>Projects / Experience</h3>
+            <div class="input-group">
+                <input type="text" id="inpProjName" placeholder="ExamStudio - Micro SaaS Tool" style="margin-bottom:5px;" onkeyup="updateCV()">
+                <textarea id="inpProjDesc" placeholder="Developed a 100% offline client-side image resizer using HTML/JS..." onkeyup="updateCV()"></textarea>
+            </div>
+
+            <button class="btn-download" onclick="downloadPDF()">📥 Download ATS PDF</button>
+            <p style="text-align: center; font-size: 11px; margin-top: 15px; color: #777;">Developed by Reyz</p>
+        </div>
+
+        <div class="preview-panel">
+            <div class="a4-page" id="resumePreview">
+                <div class="cv-header">
+                    <h1 class="cv-name" id="cvName">AMAN KUMAR</h1>
+                    <div class="cv-contact">
+                        <span id="cvEmail">aman@example.com</span> | 
+                        <span id="cvPhone">+91 7488XXXXXX</span> | 
+                        <span id="cvLink">linkedin.com/in/reyz</span>
+                    </div>
+                </div>
+
+                <div class="cv-section-title">Professional Summary</div>
+                <p class="cv-text" id="cvSummary">A highly motivated IT Engineering student passionate about building scalable web applications and Micro-SaaS products.</p>
+
+                <div class="cv-section-title">Education</div>
+                <p class="cv-item-title" id="cvDegree">B.Tech in Information Technology</p>
+                <div class="cv-item-subtitle">
+                    <span id="cvCollege">BIT Sindri, Dhanbad</span>
+                    <span><span id="cvEduYear">2023 - 2027</span> | <span id="cvEduScore">CGPA: 8.5</span></span>
+                </div>
+
+                <div class="cv-section-title">Technical Skills</div>
+                <p class="cv-text" id="cvSkills" style="white-space: pre-line;">Languages: C++, JavaScript, Python<br>Tools: Git, VS Code, Figma</p>
+
+                <div class="cv-section-title">Projects</div>
+                <p class="cv-item-title" id="cvProjName">ExamStudio - Micro SaaS Tool</p>
+                <p class="cv-text" id="cvProjDesc">Developed a 100% offline client-side image resizer using HTML/JS. Implemented real-time compression algorithms and integrated a zero-fee UPI merchant gateway for monetization.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LIVE UPDATE ENGINE (The Magic)
+        function updateCV() {
+            const fields = ['Name', 'Email', 'Phone', 'Link', 'Summary', 'Degree', 'College', 'EduYear', 'EduScore', 'Skills', 'ProjName', 'ProjDesc'];
+            
+            fields.forEach(field => {
+                const inputVal = document.getElementById('inp' + field).value;
+                const cvElement = document.getElementById('cv' + field);
+                
+                if(inputVal.trim() !== "") {
+                    cvElement.innerText = inputVal;
+                } else {
+                    // Reset to placeholder text if input is empty
+                    cvElement.innerText = document.getElementById('inp' + field).getAttribute('placeholder');
+                }
+            });
+        }
+
+        // PDF GENERATOR ENGINE
+        function downloadPDF() {
+            const element = document.getElementById('resumePreview');
+            const userName = document.getElementById('inpName').value || 'Resume';
+            const fileName = userName.replace(/\s+/g, '_') + '_ATS_Resume.pdf';
+
+            // Change button state
+            const btn = document.querySelector('.btn-download');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ Generating PDF...";
+            btn.disabled = true;
+
+            const opt = {
+                margin:       0,
+                filename:     fileName,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+    </script>
+
+</body>
+</html>
